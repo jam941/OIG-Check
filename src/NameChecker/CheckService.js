@@ -1,7 +1,9 @@
 import getData from '../OigData/formatData.js'
 
-async function check(){
-    const oig = await getData()
+const OIG_DIR = '../OigData/UPDATED.csv'
+async function check(data){
+    
+    const oig = await getData(data)
     console.log(oig[0])
 }
 check()
