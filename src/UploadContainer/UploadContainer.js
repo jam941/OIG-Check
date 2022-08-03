@@ -1,5 +1,7 @@
 import React,{Component} from 'react';
+import axios from 'axios'
 import csv from 'csvtojson'
+import FormData from 'form-data'
 //import fs from'fs'
 async function parseData(dir){
     let results = []
@@ -20,19 +22,20 @@ export default class Upload extends Component{
     }
     
     handleChange(event){
-        this.setState({uploadedData:event.target.value})
-    
+        this.setState({uploadedData:event.target.files[0]})
     }
     handleSubmit(event){
-        
+        event.preventDefault()
         let data = this.state.uploadedData
         console.log('Data is: ', data)
         if(!data){
             return
         }
-         data =  parseData(data)
-         console.log(data)
-        event.preventDefault()
+        var form = new FormData()
+        form.append('file',data)
+
+        axios.post('http://localhost:5000/analysis',form)
+        
     }
     render(){
         return(
