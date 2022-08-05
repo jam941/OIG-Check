@@ -6,8 +6,9 @@ async function parse(path){
     let reformatedResults = []
     data.forEach(person=>{
         reformatedResults.push({
-            Name: person.LASTNAME + ','+ person.FIRSTNAME + ' ' + person.MIDNAME,
-            DOB:person.DOB
+            First: person.FIRSTNAME,
+            Last: person.LASTNAME,
+            DOB:person.DOB,
         })
     })
     let saveObj = {data:reformatedResults}

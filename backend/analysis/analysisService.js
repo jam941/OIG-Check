@@ -1,5 +1,6 @@
 import fs from 'fs'
 import getData from '../parsing/formatData.js'
+import compareNames from 'compare-names'
 
 export default async function analyze(path){
     let oig = JSON.parse(fs.readFileSync('./analysis/oig.json')).data
@@ -7,13 +8,28 @@ export default async function analyze(path){
     
     oig.forEach(e=>{
         e.DOB = getDate(e.DOB)
-        e.Name = e.Name.trim().toLowerCase()
+        e.First = e.First.trim().toLowerCase().replace(/\W/g, '')
+        e.Last = e.Last.trim().toLowerCase().replace(/\W/g, '')
     })
     comp.forEach(e=>{
         e.DOB = getDate(e.DOB)
-        e.Name = e.Name.trim().toLowerCase()
-    })    
-    
+        let names = e.Name.trim().toLowerCase().split(' ')
+        e.Last = names[0].replace(/\W/g, '')
+        e.First = names[0].replace(/\W/g, '')
+         
+    })
+    let matches = []
+    comp.forEach((employee)=>{
+        oig.forEach((person)=>{
+            if(false)
+                matches.push({
+                    employee:employee,
+                    oig:person
+                })
+            })
+            })
+           
+    console.log(matches[0])
 }
 
 export function getDate(input){
@@ -42,4 +58,29 @@ export function getDate(input){
         output = new Date(year,month,day)
     }
     return output
+}
+
+function compare(personA,personB){
+    const sameBrith = personA.DOB.getTime() === personB.DOB.getTime()
+        
+}
+function checkLast(lastA,lastB,limit){
+    if(lastA == lastB){
+        return true
+    }
+    let len = Math.min([lastA.length,lastB.length,limit])
+    for(let i =0; i<len; i++){
+        if(lastA.charAt(i) != lastB.charAt(i)){
+            return false
+        }
+    }
+    return true
+}
+
+function checkFirst(firstA,firstB){
+    if(firstA==firstB){
+        return true
+    }
+    //TODO: repalce with directory of nicknames
+    fs.readFileSync('')
 }
