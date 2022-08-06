@@ -3,6 +3,7 @@ import getData from '../parsing/formatData.js'
 import compareNames from 'compare-names'
 
 export default async function analyze(path){
+    let nicknames = await getData('./analysis/nicknames.csv',()=>{return true})
     let oig = JSON.parse(fs.readFileSync('./analysis/oig.json')).data
     let comp = await getData(path,()=>{return true})
     
@@ -77,10 +78,26 @@ function checkLast(lastA,lastB,limit){
     return true
 }
 
-function checkFirst(firstA,firstB){
+
+
+function checkFirst(firstA,firstB, nicknames){
     if(firstA==firstB){
         return true
     }
     //TODO: repalce with directory of nicknames
-    fs.readFileSync('')
+    nicknames.forEach(e=>{
+        let tempName = e.name.toLowerCase()
+        let tempNickname = e.nickname.toLowerCase()
+        if(firstA==tempName){
+            if(firstB == tempNickname){
+                return true
+            }
+        }
+        if(firstA == tempNickname){
+            if(firstA == tempName){
+                return true
+            }
+        }
+    })
+    return false
 }
