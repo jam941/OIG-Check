@@ -3,7 +3,7 @@ import getData from '../parsing/formatData.js'
 import compareNames from 'compare-names'
 
 export default async function analyze(path){
-    let nicknames = await getData('./analysis/nicknames.csv',()=>{return true})
+    let nicknames = JSON.parse(fs.readFileSync('./analysis/nicknames.json')).data
     let oig = JSON.parse(fs.readFileSync('./analysis/oig.json')).data
     let comp = await getData(path,()=>{return true})
     
@@ -22,7 +22,7 @@ export default async function analyze(path){
     let matches = []
     comp.forEach((employee)=>{
         oig.forEach((person)=>{
-            if(false)
+            if(test(employee,person,5,nicknames))
                 matches.push({
                     employee:employee,
                     oig:person
@@ -33,6 +33,9 @@ export default async function analyze(path){
     console.log(matches[0])
 }
 
+function test(p1,p2,limit,nicknames){
+    return checkFirst(p1,p2,nicknames) || checkLast(p1,p2,limit) || checkDOB(p1,p2)
+}
 export function getDate(input){
     
     let output = null
@@ -61,8 +64,8 @@ export function getDate(input){
     return output
 }
 
-function compare(personA,personB){
-    const sameBrith = personA.DOB.getTime() === personB.DOB.getTime()
+function checkDOB(personA,personB){
+    return personA.DOB.getTime() === personB.DOB.getTime()
         
 }
 function checkLast(lastA,lastB,limit){
