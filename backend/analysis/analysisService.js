@@ -1,7 +1,7 @@
 import fs from 'fs'
 import getData from '../parsing/formatData.js'
 import compareNames from 'compare-names'
-
+import LIMIT from'../../constants.js'
 export default async function analyze(path){
     let nicknames = JSON.parse(fs.readFileSync('./analysis/nicknames.json')).data
     let oig = JSON.parse(fs.readFileSync('./analysis/oig.json')).data
@@ -22,7 +22,7 @@ export default async function analyze(path){
     let matches = []
     comp.forEach((employee)=>{
         oig.forEach((person)=>{
-            if(test(employee,person,5,nicknames))
+            if(test(employee,person,nicknames))
                 matches.push({
                     employee:employee,
                     oig:person
@@ -33,9 +33,10 @@ export default async function analyze(path){
     console.log(matches[0])
 }
 
-function test(p1,p2,limit,nicknames){
-    return checkFirst(p1,p2,nicknames) || checkLast(p1,p2,limit) || checkDOB(p1,p2)
+function test(p1,p2,nicknames){
+    return checkFirst(p1,p2,nicknames) || checkLast(p1,p2,LIMIT) || checkDOB(p1,p2)
 }
+
 export function getDate(input){
     
     let output = null
@@ -68,6 +69,7 @@ function checkDOB(personA,personB){
     return personA.DOB.getTime() === personB.DOB.getTime()
         
 }
+
 function checkLast(lastA,lastB,limit){
     if(lastA == lastB){
         return true
@@ -80,8 +82,6 @@ function checkLast(lastA,lastB,limit){
     }
     return true
 }
-
-
 
 function checkFirst(firstA,firstB, nicknames){
     if(firstA==firstB){
