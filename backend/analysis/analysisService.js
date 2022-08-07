@@ -23,10 +23,12 @@ export default async function analyze(path){
     comp.forEach((employee)=>{
         //console.log('Checking ' + employee.First + ' ' + employee.Last)
         oig.forEach((person)=>{
-            if(test(employee,person,nicknames))
+            let testRes = test(employee,person,nicknames)
+            if(testRes)
                 matches.push({
                     employee:employee,
-                    oig:person
+                    oig:person,
+                    response: testRes
                 })
             })
             })
@@ -35,7 +37,22 @@ export default async function analyze(path){
 }
 
 function test(p1,p2,nicknames){
-    return checkFirst(p1,p2,nicknames) || checkLast(p1,p2,LIMIT) || checkDOB(p1,p2)
+    let isBirth = checkDOB(p1,p2)
+    let isLast = checkLast(p1,p2,LIMIT)
+    let isFirst = checkFirst(p1,p2,nicknames)
+    let response = []
+    if(isBirth){
+        response.push('DOB')
+    }
+    if(isLast){
+        response.push('First')
+    }
+    if(isFirst){
+        response.push('Last')
+    }
+    if (isBirth || isFirst || isLast){
+        return response
+    }
 }
 
 export function getDate(input){
