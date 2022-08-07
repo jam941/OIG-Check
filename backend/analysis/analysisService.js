@@ -3,7 +3,7 @@ import getData from '../parsing/formatData.js'
 import compareNames from 'compare-names'
 import LIMIT from'../../constants.js'
 export default async function analyze(path){
-    let nicknames = JSON.parse(fs.readFileSync('./analysis/nicknames.json')).data
+    let nicknames = JSON.parse(fs.readFileSync('./analysis/nicknames.json'))
     let oig = JSON.parse(fs.readFileSync('./analysis/oig.json')).data
     let comp = await getData(path,()=>{return true})
     
@@ -21,7 +21,7 @@ export default async function analyze(path){
     })
     let matches = []
     comp.forEach((employee)=>{
-        console.log('Checking ' + employee.First + ' ' + employee.Last)
+        //console.log('Checking ' + employee.First + ' ' + employee.Last)
         oig.forEach((person)=>{
             if(test(employee,person,nicknames))
                 matches.push({
@@ -31,7 +31,7 @@ export default async function analyze(path){
             })
             })
            
-    console.log(matches[0])
+    console.log(matches)
 }
 
 function test(p1,p2,nicknames){
@@ -81,7 +81,7 @@ function checkLast(lastA,lastB,limit){
             return false
         }
     }
-    return true
+    return false
 }
 
 function checkFirst(firstA,firstB, nicknames){
@@ -89,19 +89,16 @@ function checkFirst(firstA,firstB, nicknames){
         return true
     }
     //TODO: repalce with directory of nicknames
-    nicknames.forEach(e=>{
-        let tempName = e.name.toLowerCase()
-        let tempNickname = e.nickname.toLowerCase()
-        if(firstA==tempName){
-            if(firstB == tempNickname){
-                return true
-            }
-        }
-        if(firstA == tempNickname){
-            if(firstA == tempName){
-                return true
-            }
-        }
+    
+    let names = nicknames[firstA]
+    if(!names){
+        return firstA==firstB
+    }
+    names.forEach(e=>{
+        if(firstB == e){
+            return true
+        }            
     })
+    
     return false
 }
