@@ -16,11 +16,12 @@ export default async function analyze(path){
         e.DOB = getDate(e.DOB)
         let names = e.Name.trim().toLowerCase().split(' ')
         e.Last = names[0].replace(/\W/g, '')
-        e.First = names[0].replace(/\W/g, '')
+        e.First = names[1].replace(/\W/g, '')
          
     })
     let matches = []
     comp.forEach((employee)=>{
+        console.log('Checking ' + employee.First + ' ' + employee.Last)
         oig.forEach((person)=>{
             if(test(employee,person,nicknames))
                 matches.push({
