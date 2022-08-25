@@ -13,6 +13,20 @@ function getHash(str){
   return hash(str)
 }
 
+function waitForFile(key){
+  let dir =  temp_dir+'/'+key+'.json'
+  return new Promise(function(resolve,reject){
+    fs.access(dir, fs.constants.R_OK,function(err){
+      if(!err){
+        resolve(dir)
+      }
+      else{
+        reject(err)
+      }
+    })
+  })
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'companyData/')
@@ -29,13 +43,22 @@ app.use(cors())
 app.post('/analysis', upload.single('file'), async function (req, res) {
   console.log('Recieved a file for processing')
   const filePath =  req.file.path
-  let resObj = await analyze(filePath)
+
   let saveLabel = getHash(filePath)
   res.send({key:saveLabel})
+
+  let resObj = await analyze(filePath)
   console.log('The CWD from this perspective is: ', process.cwd())
   saveLabel = temp_dir+ '/'+saveLabel;
   let stringy = JSON.stringify(resObj)
   fs.writeFileSync(saveLabel+'.json',stringy)
+})
+
+app.get('/getFile/:key',async function (req,res){
+  let key = req.params.key
+  key = await waitForFile(key)
+  let data =  JSON.parse(fs.readFileSync(key))
+  res.send(data)
 })
 
 app.listen(port, () => {
