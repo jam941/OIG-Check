@@ -34,7 +34,9 @@ export default class Upload extends Component{
         var form = new FormData()
         form.append('file',data)
 
-        axios.post('http://localhost:5000/analysis',form)
+        axios.post('http://localhost:5000/analysis',form).then(res=>{
+            console.log(res)
+        })
         
     }
     render(){

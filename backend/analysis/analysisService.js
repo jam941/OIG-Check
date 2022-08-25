@@ -33,7 +33,7 @@ export default async function analyze(path){
             })
             })
            
-    console.log(matches)
+    return matches
 }
 
 function test(p1,p2,nicknames){
