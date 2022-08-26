@@ -37,7 +37,7 @@ export default class Upload extends Component{
         axios.post('http://localhost:5000/analysis',form).then(res=>{
             let params = {key:res.data.key}
             axios.get('http://localhost:5000/getfile/'+res.data.key).then(res=>{
-                console.log('Res: ', res)
+                console.log('Res: ', res.data)
             })
         })
         

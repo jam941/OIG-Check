@@ -5,6 +5,7 @@ import multer from 'multer'
 import hash from 'object-hash'
 import { flushSync } from 'react-dom'
 import fs from 'fs'
+import path from 'path'
 const app = express()
 const port = 5000
 const temp_dir = './finished'
@@ -21,7 +22,7 @@ function waitForFile(key){
         resolve(dir)
       }
       else{
-        reject(err)
+        console.log('No file found yet?')
       }
     })
   })
@@ -48,10 +49,11 @@ app.post('/analysis', upload.single('file'), async function (req, res) {
   res.send({key:saveLabel})
 
   let resObj = await analyze(filePath)
-  console.log('The CWD from this perspective is: ', process.cwd())
+  console.log('Object made')
   saveLabel = temp_dir+ '/'+saveLabel;
   let stringy = JSON.stringify(resObj)
   fs.writeFileSync(saveLabel+'.json',stringy)
+  console.log('Object saved:')
 })
 
 app.get('/getFile/:key',async function (req,res){
@@ -59,8 +61,16 @@ app.get('/getFile/:key',async function (req,res){
   key = await waitForFile(key)
   let data =  JSON.parse(fs.readFileSync(key))
   res.send(data)
+  console.log('Get data send')
+  let absKey = (process.cwd()+key).replace('.','')
+  console.log('Deleting: ' , absKey)
+  fs.unlink(absKey,(err=>{
+    console.log(err)
+  }))
 })
 
 app.listen(port, () => {
+  //console.log('Clearing caches')
+  //fs.unlink('finished',(e)=>{console.log(e)})
   console.log(`Launched API at base url: http://localhost:${port}`)
 })
