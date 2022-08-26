@@ -42,18 +42,17 @@ const upload = multer({ storage: storage })
 app.use(cors())
 
 app.post('/analysis', upload.single('file'), async function (req, res) {
-  console.log('Recieved a file for processing')
   const filePath =  req.file.path
 
   let saveLabel = getHash(filePath)
   res.send({key:saveLabel})
 
   let resObj = await analyze(filePath)
-  console.log('Object made')
   saveLabel = temp_dir+ '/'+saveLabel;
   let stringy = JSON.stringify(resObj)
   fs.writeFileSync(saveLabel+'.json',stringy)
-  console.log('Object saved:')
+  let absKey = (process.cwd()+'/'+filePath)
+  fs.unlink(absKey,(err)=>{if(err){console.log(err)}})
 })
 
 app.get('/getFile/:key',async function (req,res){
@@ -61,12 +60,6 @@ app.get('/getFile/:key',async function (req,res){
   key = await waitForFile(key)
   let data =  JSON.parse(fs.readFileSync(key))
   res.send(data)
-  console.log('Get data send')
-  let absKey = (process.cwd()+key).replace('.','')
-  console.log('Deleting: ' , absKey)
-  fs.unlink(absKey,(err=>{
-    console.log(err)
-  }))
 })
 
 app.listen(port, () => {
