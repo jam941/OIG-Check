@@ -16,7 +16,7 @@ async function parseData(dir){
 export default class Upload extends Component{
     constructor(props){
         super(props)
-        this.state = {uploadedData: null}
+        this.state = {uploadedData: null, response: null,isWaiting:false,}
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -33,24 +33,36 @@ export default class Upload extends Component{
         }
         var form = new FormData()
         form.append('file',data)
-
+        this.setState({isWaiting:false})
         axios.post('http://localhost:5000/analysis',form).then(res=>{
             let params = {key:res.data.key}
             axios.get('http://localhost:5000/getfile/'+res.data.key).then(res=>{
                 console.log('Res: ', res.data)
+                this.setState({response:res.data})
+                
             })
         })
-        
     }
-    render(){
+
+    render(props){
+        const isWaiting = this.state.isWaiting
+        console.log(this.state.response)
+        const hasData = !!this.state.response
         return(
-        <div id = 'upload'>
+        <>
+        <div>{isWaiting && <div>LOADING</div>}</div>
+        <div id = 'upload' >
+            {!isWaiting && !hasData &&
             <form id = 'dataUpload' onSubmit={this.handleSubmit}>
                 <label>Employee File
                     <input value = {this.state.value} onChange={this.handleChange} type="file" id="myFile"/>
                 </label>
                 <input type = "submit" value="Submit"/>
             </form>
-        </div>)
+            }
+        </div>
+        </>
+        
+    )
     }
 }
