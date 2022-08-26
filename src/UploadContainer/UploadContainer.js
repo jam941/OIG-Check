@@ -48,6 +48,7 @@ export default class Upload extends Component{
         const isWaiting = this.state.isWaiting
         console.log(this.state.response)
         const hasData = !!this.state.response
+        const data = this.state.response
         return(
         <>
         <div>{isWaiting && <div>LOADING</div>}</div>
@@ -60,7 +61,14 @@ export default class Upload extends Component{
                 <input type = "submit" value="Submit"/>
             </form>
             }
+            {hasData && !isWaiting &&
+            <div>
+                Result data goes here
+            </div>
+            
+            }
         </div>
+
         </>
         
     )
