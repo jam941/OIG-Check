@@ -62,13 +62,30 @@ export default class Upload extends Component{
             </form>
             }
             {hasData && !isWaiting &&
-            <div>
-                Result data goes here
-            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Matched Employee</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {data.map((value,key) => {
+                        return(
+                            <tr key={key}>
+                                <td>{value.employee.Name}</td>
+                                <td>{value.oig.First + ' ' + value.oig.Last}</td>
+                                <td>{value.response[0]}</td>
+                            </tr>
+                        )
+                    })}
+                </tbody>
+            </table>
             
             }
         </div>
-
+        
         </>
         
     )
